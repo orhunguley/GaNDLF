@@ -248,6 +248,12 @@ def ImagesFromDataFrame(dataframe,
         
         # iterating through the values to predict of the subject
         valueCounter = 0
+
+        # print("----------------Prediction Headers-------------")
+        # print(predictionHeaders)
+
+        # print("----------------Subject Dict-------------")
+        # print(subject_dict)
         for values in predictionHeaders:
             # assigning the dict key to the channel
             subject_dict['value_' + str(valueCounter)] = np.array(dataframe[values][patient])

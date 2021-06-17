@@ -72,6 +72,12 @@ def step(model, image, label, params):
 
     # print("Output shape : ", output.shape, flush=True)
     # one-hot encoding of 'output' will probably be needed for segmentation
+
+
+    print("------LABEL-----")
+    print(label)
+    print("------LABEL-----")
+
     loss, metric_output = get_loss_and_metrics(label, output, params)
     
     if params["model"]["dimension"] == 2:
@@ -138,6 +144,9 @@ def train_network(model, train_dataloader, optimizer, params):
             # one-hot encoding of 'label' will probably be needed for segmentation
         label = label.to(params["device"])
         # print("Train : ", label.shape, image.shape, flush=True)
+        # print("-----------ONE HOT-----------")
+        # print(torch.nn.functional.one_hot(label))
+        # print("-----------ONE HOT-----------")
         loss, calculated_metrics, _ = step(model, image, label, params)
         nan_loss = True
         if params["model"]["amp"]:
@@ -438,6 +447,11 @@ def training_loop(
     # Defining our model here according to parameters mentioned in the configuration file
     print("Number of channels : ", params["model"]["num_channels"])
 
+
+    # ORHUN UPDATE -- CHECK IF CLASSIFICATION
+
+    print("MODEL PARAMS:")
+    print(params["model"])
     # Fetch the model according to params mentioned in the configuration file
     model, params["model"]["amp"] = get_model(
         modelname=params["model"]["architecture"],

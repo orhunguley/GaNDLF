@@ -52,6 +52,7 @@ def TrainingManager(dataframe, outputDir, parameters, device, reset_prev):
     # get the indeces for kfold splitting
     trainingData_full = dataframe
 
+    print(f"# OF CLASSES AT LINE 55: {parameters['model']['num_classes']}")
     # start the kFold train for testing
     for trainAndVal_index, testing_index in kf_testing.split(subjectIDs_full): # perform testing split
 
@@ -120,6 +121,9 @@ def TrainingManager(dataframe, outputDir, parameters, device, reset_prev):
             trainingData = pd.DataFrame() # initialize the variable
             validationData = pd.DataFrame() # initialize the variable
 
+            print("HERE", flush=True)
+            print()
+            print(f"PARAMS after HERE: {parameters['model']}")
             # loop over all train_index and construct new dataframe
             for subject_idx in train_index:                 
                 trainingData = trainingData.append(trainingData_full[trainingData_full[trainingData_full.columns[parameters["headers"]['subjectIDHeader']]] == subjectIDs_full[subject_idx]])

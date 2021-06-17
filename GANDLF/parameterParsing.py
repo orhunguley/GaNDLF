@@ -187,6 +187,7 @@ def get_model(
         
     elif 'densenet' in modelname:
         if modelname == 'densenet121': # regressor/classifier network
+            print(f"NUMBER OF CLASSES: {num_classes}")
             model = densenet.generate_model(model_depth=121,
                                             num_classes=num_classes,
                                             num_dimensions=num_dimensions,
@@ -493,8 +494,12 @@ def get_loss_and_metrics(ground_truth, predicted, params):
     loss_function = fetch_loss_function(params["loss_function"], params)
     loss = loss_function(predicted, ground_truth, params)
     metric_output = {}
+
+    print(f"PREDICTED: {predicted.shape}")
+    print(f"ground_truth: {ground_truth.shape}")
     # Metrics should be a list
     for metric in params["metrics"]:
         metric_function = fetch_metric(metric)  # Write a fetch_metric
+        print(f"metric_function(predicted, ground_truth, params).cpu().data : {metric_function(predicted, ground_truth, params).cpu().data}")
         metric_output[metric] = metric_function(predicted, ground_truth, params).cpu().data.item()
     return loss, metric_output

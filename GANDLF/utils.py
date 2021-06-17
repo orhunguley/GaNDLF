@@ -391,6 +391,8 @@ def populate_header_in_parameters(parameters, headers):
     # initialize common parameters based on headers
     parameters["headers"] = headers
     # ensure the number of output classes for model prediction is working correctly
+    print(f"NUMBER OF CLASSES: --- len(headers[predictionHeaders]) ******* : {len(headers['predictionHeaders'])}")
+
     if len(headers["predictionHeaders"]) > 0:
         parameters["model"]["num_classes"] = len(headers["predictionHeaders"])
     else:
@@ -398,7 +400,11 @@ def populate_header_in_parameters(parameters, headers):
     # initialize number of channels for processing
     if not("num_channels" in parameters["model"]):
         parameters["model"]["num_channels"] = len(headers["channelHeaders"])
-    
+
+    if parameters["model"]["problem_type"] == 'classification':
+        print("In problem type condition")
+        parameters["model"]["num_classes"] = len(parameters["model"]["class_list"])
+        print(parameters["model"]["num_classes"])
     return parameters
 
 def find_problem_type(headersFromCSV, model_final_layer):
@@ -414,10 +420,13 @@ def find_problem_type(headersFromCSV, model_final_layer):
     if len(headersFromCSV['predictionHeaders']) > 0:
         if model_final_layer is None:
             is_regression = True
+            print("Problem Type is Regression.")
         else:
             is_classification = True
+            print("Problem Type is Classification.")
     else:
         is_segmentation = True
+        print("Problem Type is Segmentation.")
     
     return is_regression, is_classification, is_segmentation
 

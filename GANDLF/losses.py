@@ -1,6 +1,6 @@
 import torch
 import sys
-from torch.nn import MSELoss
+from torch.nn import MSELoss, CrossEntropyLoss
 
 
 def one_hot(segmask_array, class_list):
@@ -104,6 +104,16 @@ def MCD_log_loss(pm, gt, params):
     return MCD(pm, gt, len(params["model"]["class_list"]), params["weights"], None, 2)
 
 
+def CEL(out, target, params):
+    print(f"OUT SHAPE: {out.shape}")
+    print(out)
+    print(f"TARGET SHAPE: {target.shape}")
+    cel_loss = CrossEntropyLoss()(out, target)
+    print(cel_loss.shape)
+    print(f"CROSS ENTROPY LOSS TYPE: {type(cel_loss)}")
+    print(f"CROSS ENTROPY LOSS: {cel_loss}")
+    return cel_loss
+
 def CE(out, target):
     iflat = out.contiguous().view(-1)
     tflat = target.contiguous().view(-1)
@@ -188,13 +198,17 @@ def MSE_loss(inp, target, params):
     acc_mse_loss = 0
     # if inp.shape != target.shape:
     #     sys.exit('Input and target shapes are inconsistent')
-
+    print("SHAPES:")
+    print(inp.shape)
+    print(target.shape)
     if inp.shape[0] == 1:
         acc_mse_loss += MSE(inp, target, reduction=params["loss_function"]['mse']["reduction"], scaling_factor=params['scaling_factor'])
         #for i in range(0, params["model"]["num_classes"]):
         #    acc_mse_loss += MSE(inp[i], target[i], reduction=params["loss_function"]['mse']["reduction"])
     else:
         for i in range(0, params["model"]["num_classes"]):
+            print(f"inp[:, i, ...].shape: {inp[:, i, ...].shape}")
+            print(f"target[:, i, ...].shape: {target[:, i, ...].shape}")
             acc_mse_loss += MSE(inp[:, i, ...], target[:, i, ...], reduction=params["loss_function"]["reduction"], scaling_factor=params['scaling_factor'])
     acc_mse_loss/=params["model"]["num_classes"]
     
@@ -215,6 +229,8 @@ def fetch_loss_function(loss_name, params):
         loss_function = DCCE
     elif loss_name == "ce":
         loss_function = CE
+    elif loss_name == "cel":
+        loss_function = CEL
     elif loss_name == "mse":
         loss_function = MSE_loss
     else:

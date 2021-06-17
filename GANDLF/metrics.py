@@ -2,7 +2,7 @@
 All the metrics are to be called from here
 """
 import torch
-from .losses import MSE, MSE_loss
+from .losses import MSE, MSE_loss, CEL
 
 # Should be removed later down the line and taken as an import instead.
 def one_hot(segmask_array, class_list):
@@ -186,6 +186,7 @@ def fetch_metric(metric_name):
 
     """
     # if dict, only pick the first value
+    print(f"METRIC NAME: {metric_name}")
     if isinstance(metric_name, dict):
         metric_name = list(metric_name)[0]
 
@@ -193,6 +194,8 @@ def fetch_metric(metric_name):
         metric_function = multi_class_dice
     elif (metric_name).lower() == "accuracy":
         metric_function = accuracy
+    elif (metric_name).lower() == "cel":
+        metric_function = CEL
     elif (metric_name).lower() == "mse":
         metric_function = MSE_loss_agg
     else:

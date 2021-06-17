@@ -105,7 +105,7 @@ def test_constructTrainingCSV():
 def test_train_segmentation_rad_2d(device):
   print('Starting 2D Rad segmentation tests')
   # read and parse csv 
-  parameters = parseConfig(testingDir + '/config_segmentation.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_segmentation_2d.yaml', version_check = False)
   training_data, parameters["headers"] = parseTrainingCSV(inputDir + '/train_2d_rad_segmentation.csv')
   parameters = populate_header_in_parameters(parameters, parameters["headers"])
   parameters['patch_size'] = patch_size['2D']
@@ -126,7 +126,7 @@ def test_train_segmentation_rad_3d(device):
   print('Starting 3D Rad segmentation tests')
   # read and parse csv 
   # read and initialize parameters for specific data dimension
-  parameters = parseConfig(testingDir + '/config_segmentation.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_segmentation_3d.yaml', version_check = False)
   training_data, parameters["headers"] = parseTrainingCSV(inputDir + '/train_3d_rad_segmentation.csv')
   parameters = populate_header_in_parameters(parameters, parameters["headers"])
   parameters = populate_header_in_parameters(parameters, parameters["headers"])
@@ -146,7 +146,7 @@ def test_train_segmentation_rad_3d(device):
 
 def test_train_regression_rad_2d(device):
   # read and initialize parameters for specific data dimension
-  parameters = parseConfig(testingDir + '/config_regression.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_regression_2d.yaml', version_check = False)
   parameters['patch_size'] = patch_size['2D']
   parameters['model']['dimension'] = 2
   parameters['model']['amp'] = True
@@ -167,7 +167,7 @@ def test_train_regression_rad_2d(device):
 
 def test_train_regression_rad_3d(device):
   # read and initialize parameters for specific data dimension
-  parameters = parseConfig(testingDir + '/config_regression.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_regression_3d.yaml', version_check = False)
   parameters['patch_size'] = patch_size['3D']
   parameters['model']['dimension'] = 3
   parameters['model']['amp'] = True
@@ -187,7 +187,7 @@ def test_train_regression_rad_3d(device):
 
 def test_train_classification_rad_2d(device):
   # read and initialize parameters for specific data dimension
-  parameters = parseConfig(testingDir + '/config_classification.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_classification_2d.yaml', version_check = False)
   parameters['modality'] = 'rad'
   parameters['patch_size'] = patch_size['2D']
   parameters['model']['dimension'] = 2
@@ -196,6 +196,9 @@ def test_train_classification_rad_2d(device):
   training_data, parameters["headers"] = parseTrainingCSV(inputDir + '/train_2d_rad_classification.csv')
   parameters = populate_header_in_parameters(parameters, parameters["headers"])
   parameters['model']['num_channels'] = len(parameters["headers"]["channelHeaders"])
+  print("***********************************")
+  print(parameters['model']['num_channels'])
+  print("***********************************")
   parameters['model']['class_list'] = parameters["headers"]["predictionHeaders"]
   # loop through selected models and train for single epoch
   for model in all_models_regression:
@@ -208,7 +211,7 @@ def test_train_classification_rad_2d(device):
 
 def test_train_classification_rad_3d(device):
   # read and initialize parameters for specific data dimension
-  parameters = parseConfig(testingDir + '/config_classification.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_classification_3d.yaml', version_check = False)
   parameters['modality'] = 'rad'
   parameters['patch_size'] = patch_size['3D']
   parameters['model']['dimension'] = 3
@@ -229,7 +232,7 @@ def test_train_classification_rad_3d(device):
 
 def test_inference_classification_rad_3d(device):
   # read and initialize parameters for specific data dimension
-  parameters = parseConfig(testingDir + '/config_classification.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_classification_3d.yaml', version_check = False)
   parameters['modality'] = 'rad'
   parameters['patch_size'] = patch_size['3D']
   parameters['model']['dimension'] = 3
@@ -251,7 +254,7 @@ def test_inference_classification_rad_3d(device):
 
 def test_scheduler_classification_rad_2d(device):
   # read and initialize parameters for specific data dimension
-  parameters = parseConfig(testingDir + '/config_classification.yaml', version_check = False)
+  parameters = parseConfig(testingDir + '/config_classification_2d.yaml', version_check = False)
   parameters['modality'] = 'rad'
   parameters['patch_size'] = patch_size['2D']
   parameters['model']['dimension'] = 2

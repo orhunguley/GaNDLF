@@ -67,6 +67,7 @@ def parseConfig(config_file_path, version_check=True):
     with open(config_file_path) as f:
         params = yaml.load(f, Loader=yaml.FullLoader)
 
+    print(params)
     if version_check:  # this is only to be used for testing
         if not ("version" in params):
             sys.exit(
@@ -455,4 +456,5 @@ def parseConfig(config_file_path, version_check=True):
     for current_parameter in parameter_defaults:
         params = initialize_parameter(params, current_parameter, parameter_defaults[current_parameter])
     
+    print(f"END OF parseConfig: {params['model']}")
     return params
