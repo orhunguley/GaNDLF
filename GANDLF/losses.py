@@ -2,7 +2,7 @@ import torch
 import sys
 from torch.nn import MSELoss, CrossEntropyLoss, L1Loss
 from .utils import one_hot
-
+import torch.nn.functional as F
 
 # Dice scores and dice losses
 def dice(inp, target):
@@ -12,6 +12,35 @@ def dice(inp, target):
     intersection = (iflat * tflat).sum()
     # 2 * intersection / union
     return (2.0 * intersection + smooth) / (iflat.sum() + tflat.sum() + smooth)
+
+
+def soft_f1_loss(out, target, params):
+    '''
+    Reference: https://gist.github.com/SuperShinyEyes/dcc68a08ff8b615442e3bc6a9b55a354
+    '''
+
+    num_classes = params["model"]["num_classes"]
+    average = params.get("f1_average")
+    epsilon = epsilon = 1e-7
+    if average not in [None, "micro", "macro", "weighted"]:
+        raise ValueError("Wrong value of average parameter")
+
+    tensor_type = out.type()
+    one_hot_target = F.one_hot(target, num_classes=num_classes)
+    probs = F.softmax(out, dim=1)
+
+    tp = (one_hot_target * probs).sum(dim=0)
+    tn = ((1 - one_hot_target) * (1 - probs)).sum(dim=0).type(tensor_type)
+    fp = ((1 - one_hot_target) * probs).sum(dim=0).type(tensor_type)
+    fn = (one_hot_target * (1 - probs)).sum(dim=0).type(tensor_type)
+
+    precision = tp / (tp + fp + epsilon)
+    recall = tp / (tp + fn + epsilon)
+
+    f1 = 2 * (precision * recall) / (precision + recall + epsilon)
+    f1 = f1.clamp(min=epsilon, max=1 - epsilon)
+
+    return 1 - f1.mean()
 
 
 def cel(out, target, params):
@@ -328,6 +357,8 @@ def fetch_loss_function(loss_name, params):
         loss_function = KullbackLeiblerDivergence
     elif loss_name == "l1":
         loss_function = L1_loss
+    elif loss_name in ["soft_f1", "soft_f1_loss", "f1", "F1"]:
+        loss_function = soft_f1_loss
     else:
         print(
             "WARNING: Could not find the requested loss function '"
