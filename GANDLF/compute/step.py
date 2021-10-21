@@ -50,17 +50,12 @@ def step(model, image, label, params):
                     flush=True,
                 )
                 params["print_rgb_label_warning"] = False
-
-    elif params["problem_type"] == "classification":
-        if not label.size():
-            label = label.unsqueeze(0)
-
-        if len(label.shape) > 1:
+            
+        if params["model"]["dimension"] == 2:
             label = torch.squeeze(label, -1)
 
     if params["model"]["dimension"] == 2:
         image = torch.squeeze(image, -1)
-        label = torch.squeeze(label, -1)
         if "value_keys" in params:  # squeeze label for segmentation only
             if len(label.shape) > 1:
                 label = torch.squeeze(label, -1)
