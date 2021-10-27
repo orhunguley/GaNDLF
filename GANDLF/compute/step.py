@@ -50,15 +50,15 @@ def step(model, image, label, params):
                     flush=True,
                 )
                 params["print_rgb_label_warning"] = False
-            
         if params["model"]["dimension"] == 2:
             label = torch.squeeze(label, -1)
 
     if params["model"]["dimension"] == 2:
         image = torch.squeeze(image, -1)
-        if "value_keys" in params:  # squeeze label for segmentation only
+        if "value_keys" in params:
             if len(label.shape) > 1:
                 label = torch.squeeze(label, -1)
+
     if params["model"]["amp"]:
         with torch.cuda.amp.autocast():
             output = model(image)
